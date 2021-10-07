@@ -1,0 +1,27 @@
+#cloud-config
+
+resize_rootfs: false
+
+preserve_hostname: false
+hostname: ${hostname}
+
+write_files:
+  - content: |
+      # Any text
+    path: /etc/growroot-disabled
+
+runcmd:
+  - [sgdisk, -e, /dev/sda]
+  - [partprobe]
+  - [parted, -s, /dev/sda, mkpart, primary, "25%", "100%"]
+  - [growpart, /dev/sda, 1]
+  - [resize2fs, /dev/sda1]
+  - [zpool, create, datapool, /dev/sda2]
+  - [apt, update]
+  - [apt, upgrade, -y]
+  - [apt, install, -y, snapd]
+  - [snap, install, microk8s, --classic, --channel=1.22]
+
+packages:
+  - gdisk
+  - zfsutils-linux
