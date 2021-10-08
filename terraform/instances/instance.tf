@@ -3,7 +3,8 @@ data "template_file" "cloud_init" {
   template = file("./cloud-config.yml")
 
   vars = {
-    hostname = "${format("master%02d", count.index + 1)}.kube.chobert.net"
+    hostname    = "${format("master%02d", count.index + 1)}.kube.chobert.net"
+    floating_ip = hcloud_floating_ip.lb.ip_address
   }
 }
 

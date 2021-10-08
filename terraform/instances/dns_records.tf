@@ -14,3 +14,11 @@ resource "cloudflare_record" "instance_record" {
   type    = "A"
   ttl     = 1
 }
+
+resource "cloudflare_record" "lb_record" {
+  zone_id = data.cloudflare_zones.chobert_net.zones[0].id
+  name    = "lb.kube"
+  value   = hcloud_floating_ip.lb.ip_address
+  type    = "A"
+  ttl     = 1
+}

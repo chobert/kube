@@ -13,7 +13,15 @@ write_files:
   - path: /etc/growroot-disabled
     content: |
       # Any text
-    path: /etc/growroot-disabled
+  - path: /etc/netplan/60-floating-ip.yaml
+    content: |
+      network:
+        version: 2
+        renderer: networkd
+        ethernets:
+          eth0:
+            addresses:
+            - ${floating_ip}/32
 
 runcmd:
   - [sgdisk, -e, /dev/sda]
