@@ -10,7 +10,8 @@ preserve_hostname: false
 hostname: ${hostname}
 
 write_files:
-  - content: |
+  - path: /etc/growroot-disabled
+    content: |
       # Any text
     path: /etc/growroot-disabled
 
