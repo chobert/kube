@@ -32,8 +32,11 @@ runcmd:
   - [zpool, create, datapool, /dev/sda2]
   - [apt, update]
   - [apt, upgrade, -y]
+  - [systemctl, enable, iscsid]
   - [apt, install, -y, snapd]
-  - [snap, install, microk8s, --classic, --channel=1.22]
+  - [snap, install, microk8s, --classic, --channel=1.22/stable]
+  - export "PATH=/snap/bin:$PATH"
+  - [microk8s, enable, dns, dashboard, openebs, metallb:${floating_ip}/32]
 
 packages:
   - gdisk
