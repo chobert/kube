@@ -8,9 +8,9 @@ This is an educational project.
 
 ## Features
 
+- [ ] cert-manager
 - [ ] Istio service mesh & Ingress
 - [ ] Keycloak
-- [ ] Certmanager
 - [ ] Gitpod
 - [ ] Plex
 - [ ] Bittorent client
