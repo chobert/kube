@@ -1,0 +1,57 @@
+repositories:
+  - name: jetstack
+    url: https://charts.jetstack.io
+  - name: incubator
+    url: https://charts.helm.sh/incubator
+
+releases:
+  - name: cert-manager
+    chart: jetstack/cert-manager
+    namespace: cert-manager
+    createNamespace: true
+    values:
+      - installCRDs: true
+
+  - name: cluster-issuer
+    chart: incubator/raw
+    namespace: cert-manager
+    needs:
+      - cert-manager/cert-manager
+    secrets:
+      - cloudflare-token-secret.yaml
+    values:
+      - resources:
+          - apiVersion: cert-manager.io/v1alpha2
+            kind: ClusterIssuer
+            metadata:
+              name: letsencrypt
+            spec:
+              acme:
+                server: https://acme-v02.api.letsencrypt.org/directory
+                email: paul@chobert.fr
+                privateKeySecretRef:
+                  name: letsencrypt
+                solvers:
+                  - dns01:
+                      cloudflare:
+                        email: paul@chobert.fr
+                        apiTokenSecretRef:
+                          name: cloudflare-api-token-secret
+                          key: api-token
+          - apiVersion: cert-manager.io/v1alpha2
+            kind: ClusterIssuer
+            metadata:
+              name: letsencrypt-staging
+            spec:
+              acme:
+                server: https://acme-staging-v02.api.letsencrypt.org/directory
+                email: paul@chobert.fr
+                privateKeySecretRef:
+                  name: letsencrypt-staging
+                solvers:
+                  - dns01:
+                      cloudflare:
+                        email: paul@chobert.fr
+                        apiTokenSecretRef:
+                          name: cloudflare-api-token-secret
+                          key: api-token
