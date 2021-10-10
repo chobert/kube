@@ -1,0 +1,3 @@
+host: hello.chobert.fr
+certificate:
+  secretName: hello-world-cert

@@ -1,0 +1,13 @@
+repositories:
+  - name: incubator
+    url: https://charts.helm.sh/incubator
+
+releases:
+  - name: app
+    namespace: hello-world
+    createNamespace: true
+    needs:
+      - namespace
+    labels:
+      istio-injection: enabled
+    chart: ./chart
