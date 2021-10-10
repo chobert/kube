@@ -12,13 +12,18 @@ releases:
     values:
       - installCRDs: true
 
+  - name: secrets
+    chart: ./charts/secrets
+    namespace: cert-manager
+    secrets:
+      - cloudflare-token-secret.yaml
+
   - name: cluster-issuer
     chart: incubator/raw
     namespace: cert-manager
     needs:
-      - cert-manager/cert-manager
-    secrets:
-      - cloudflare-token-secret.yaml
+      - secrets
+      - cert-manager
     values:
       - resources:
           - apiVersion: cert-manager.io/v1alpha2
