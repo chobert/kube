@@ -1,2 +1,3 @@
 helmfiles:
+  - path: metallb/helmfile.yaml
   - path: cert-manager/helmfile.yaml
