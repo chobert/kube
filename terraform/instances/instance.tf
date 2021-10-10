@@ -20,7 +20,7 @@ resource "hcloud_server" "master" {
 
   network {
     network_id = hcloud_network.main_network.id
-    ip         = cidrhost(hcloud_network_subnet.main_subnet.ip_range, count.index + 1)
+    ip         = cidrhost(hcloud_network_subnet.main_subnet.ip_range, count.index + 11)
   }
 
   user_data = data.template_file.cloud_init[count.index].rendered
