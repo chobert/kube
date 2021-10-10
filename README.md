@@ -8,7 +8,7 @@ This is an educational project.
 
 ## Features
 
-- [ ] cert-manager
+- [x] cert-manager
 - [ ] Istio service mesh & Ingress
 - [ ] Keycloak
 - [ ] Gitpod
