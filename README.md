@@ -9,7 +9,7 @@ This is an educational project.
 ## Features
 
 - [x] cert-manager
-- [ ] Istio service mesh & Ingress
+- [x] Istio service mesh & Ingress
 - [ ] Keycloak
 - [ ] Gitpod
 - [ ] Plex
