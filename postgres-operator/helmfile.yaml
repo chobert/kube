@@ -1,0 +1,9 @@
+repositories:
+  - name: postgres-operator
+    url: git+https://github.com/CrunchyData/postgres-operator-examples@helm?sparse=0&ref=4af6f5718c3454a3d4d3d3ec29fe1099abc10625
+
+releases:
+  - name: postgres-operator
+    chart: postgres-operator/pgo
+    namespace: postgres-operator
+    createNamespace: true
