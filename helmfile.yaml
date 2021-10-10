@@ -1,3 +1,4 @@
 helmfiles:
   - path: metallb/helmfile.yaml
   - path: cert-manager/helmfile.yaml
+  - path: istio/helmfile.yaml

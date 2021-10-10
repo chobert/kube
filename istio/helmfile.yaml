@@ -1,0 +1,31 @@
+repositories:
+  - name: incubator
+    url: https://charts.helm.sh/incubator
+  - name: istio
+    url: git+https://github.com/istio/istio@manifests/charts?sparse=0&ref=1.11.3
+  - name: istio-control
+    url: git+https://github.com/istio/istio@manifests/charts/istio-control?sparse=0&ref=1.11.3
+  - name: istio-gateways
+    url: git+https://github.com/istio/istio@manifests/charts/gateways?sparse=0&ref=1.11.3
+
+releases:
+  - name: istio-base
+    chart: istio/base
+    namespace: istio-system
+    createNamespace: true
+    needs:
+      - coredns/coredns
+      - metallb-system/metallb
+
+  - name: istiod
+    chart: istio-control/istio-discovery
+    namespace: istio-system
+    needs:
+      - istio-system/istio-base
+
+  - name: istio-ingress
+    chart: istio-gateways/istio-ingress
+    namespace: istio-system
+    needs:
+      - istio-system/istio-base
+      - istio-system/istiod
