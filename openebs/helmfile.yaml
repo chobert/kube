@@ -23,8 +23,17 @@ releases:
           - apiVersion: storage.k8s.io/v1
             kind: StorageClass
             metadata:
-              name: datapool
+              name: datapool-volumes-ext4
             allowVolumeExpansion: true
             parameters:
-              poolname: datapool
+              poolname: datapool/volumes/ext4
+              fstype: "ext4"
+            provisioner: zfs.csi.openebs.io
+          - apiVersion: storage.k8s.io/v1
+            kind: StorageClass
+            metadata:
+              name: datapool-volumes-block
+            allowVolumeExpansion: true
+            parameters:
+              poolname: datapool/volumes/block
             provisioner: zfs.csi.openebs.io
