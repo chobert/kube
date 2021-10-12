@@ -1,0 +1,11 @@
+releases:
+  - name: keycloak
+    namespace: keycloak
+    createNamespace: true
+    chart: ./charts/keycloak
+    secrets:
+      - secrets.yaml
+    values:
+      - host: id.chobert.fr
+        certificate:
+          secretName: host-cert

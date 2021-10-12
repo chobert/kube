@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Release.Name}}
+  namespace: {{.Release.Namespace}}
+  labels:
+    app: {{.Release.Name}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{.Release.Name}}
+  template:
+    metadata:
+      labels:
+        app: {{.Release.Name}}
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:15.0.2
+          env:
+            - name: KEYCLOAK_USER
+              value: "paul"
+            - name: KEYCLOAK_PASSWORD
+              valueFrom: {secretKeyRef: {name: password-secret, key: password}}
+            - name: PROXY_ADDRESS_FORWARDING
+              value: "true"
+            - name: DB_VENDOR
+              value: postgres
+            - name: DB_ADDR
+              valueFrom: {secretKeyRef: {name: {{.Release.Name}}-database-pguser-{{.Release.Name}}-database, key: host}}
+            - name: DB_PORT
+              valueFrom: {secretKeyRef: {name: {{.Release.Name}}-database-pguser-{{.Release.Name}}-database, key: port}}
+            - name: DB_DATABASE
+              valueFrom: {secretKeyRef: {name: {{.Release.Name}}-database-pguser-{{.Release.Name}}-database, key: dbname}}
+            - name: DB_USER
+              valueFrom: {secretKeyRef: {name: {{.Release.Name}}-database-pguser-{{.Release.Name}}-database, key: user}}
+            - name: DB_PASSWORD
+              valueFrom:
+                {secretKeyRef: {name: {{.Release.Name}}-database-pguser-{{.Release.Name}}-database, key: password}}
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: https
+              containerPort: 8443
+          readinessProbe:
+            httpGet:
+              path: /auth/realms/master
+              port: 8080
