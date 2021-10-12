@@ -1,0 +1,43 @@
+repositories:
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
+
+releases:
+  - name: prometheus
+    chart: prometheus-community/kube-prometheus-stack
+    namespace: prometheus
+    secrets:
+      - secrets.yaml
+    values:
+      - grafana:
+          annotations:
+            sidecar.istio.io/inject: "true"
+          ingress:
+            enabled: false
+          persistence:
+            enabled: true
+            size: 5Gi
+            storageClassName: datapool-volumes-ext4
+          grafana.ini:
+            server:
+              root_url: https://grafana.chobert.fr
+            auth:
+              disable_login_form: true
+            auth.generic_oauth:
+              enabled: true
+              name: "id.chobert.fr"
+              client_id: "grafana.chobert.fr"
+              auth_url: "https://id.chobert.fr/auth/realms/master/protocol/openid-connect/auth"
+              token_url: "https://id.chobert.fr/auth/realms/master/protocol/openid-connect/token"
+              api_url: "https://id.chobert.fr/auth/realms/master/protocol/openid-connect/userinfo"
+              allow_sign_up: true
+              role_attribute_path: "contains(roles[*], 'admin') && 'Admin' || contains(roles[*], 'editor') && 'Editor' || 'Viewer'"
+              email_attribute_name: email
+              scopes: "openid profile email"
+  - name: grafana-ingress
+    chart: ./charts/grafana-ingress
+    namespace: prometheus
+    values:
+      - host: grafana.chobert.fr
+        certificate:
+          secretName: grafana-cert
