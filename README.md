@@ -11,7 +11,7 @@ This is an educational project.
 - [x] cert-manager
 - [x] Istio service mesh & Ingress
 - [x] ZFS Storage Class
-- [ ] Keycloak
+- [x] Keycloak
 - [ ] Gitpod
 - [ ] Plex
 - [ ] Bittorent client
