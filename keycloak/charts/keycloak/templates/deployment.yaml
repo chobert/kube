@@ -21,24 +21,23 @@ spec:
           image: quay.io/keycloak/keycloak:15.0.2
           env:
             - name: KEYCLOAK_USER
-              value: "paul"
+              value: paul
             - name: KEYCLOAK_PASSWORD
-              valueFrom: {secretKeyRef: {name: password-secret, key: password}}
+              value: {{.Values.adminPassword | quote}}
             - name: PROXY_ADDRESS_FORWARDING
               value: "true"
             - name: DB_VENDOR
               value: postgres
             - name: DB_ADDR
-              valueFrom: {secretKeyRef: {name: {{.Release.Name}}-database-pguser-{{.Release.Name}}-database, key: host}}
+              value: postgres-cluster-main-primary.postgres-cluster-main.svc
             - name: DB_PORT
-              valueFrom: {secretKeyRef: {name: {{.Release.Name}}-database-pguser-{{.Release.Name}}-database, key: port}}
+              value: "5432"
             - name: DB_DATABASE
-              valueFrom: {secretKeyRef: {name: {{.Release.Name}}-database-pguser-{{.Release.Name}}-database, key: dbname}}
+              value: keycloak
             - name: DB_USER
-              valueFrom: {secretKeyRef: {name: {{.Release.Name}}-database-pguser-{{.Release.Name}}-database, key: user}}
+              value: keycloak
             - name: DB_PASSWORD
-              valueFrom:
-                {secretKeyRef: {name: {{.Release.Name}}-database-pguser-{{.Release.Name}}-database, key: password}}
+              value: {{.Values.databasePassword | quote}}
           ports:
             - name: http
               containerPort: 8080
