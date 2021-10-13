@@ -1,0 +1,6 @@
+releases:
+  - name: postgres-cluster-main
+    namespace: postgres-cluster-main
+    chart: ./charts/postgres-cluster
+    secrets:
+      - secrets.yaml
