@@ -11,12 +11,12 @@ This is an educational project.
 - [x] cert-manager
 - [x] Istio service mesh & Ingress
 - [x] ZFS Storage Class
-- [x] Prometheus & Grafana
-- [x] Keycloak
-- [ ] Gitpod
-- [ ] Plex
-- [ ] Bittorent client
-- [ ] Email hosting
+- [x] Keycloak → id.chobert.fr
+- [x] Prometheus & Grafana → grafana.chobert.fr
+- [ ] Postgres Cluster
+- [ ] Minio Tenant
+- [ ] Redis Cluster
+- [ ] Gitlab
 
 ## Storage configuration
 
