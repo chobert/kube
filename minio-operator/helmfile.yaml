@@ -1,0 +1,11 @@
+repositories:
+  - name: minio
+    url: https://operator.min.io/
+
+releases:
+  - name: minio-operator
+    namespace: minio-operator
+    createNamespace: true
+    chart: minio/minio-operator
+    values:
+      - tenants: []
