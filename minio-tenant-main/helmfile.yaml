@@ -1,0 +1,10 @@
+releases:
+  - name: minio-tenant-main
+    namespace: minio-tenant-main
+    chart: ./chart
+    secrets:
+      - secrets.yaml
+    values:
+      - host: minio.chobert.fr
+        certificate:
+          secretName: minio-ingress-cert

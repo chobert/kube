@@ -1,0 +1,22 @@
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: {{.Release.Name}}
+  namespace: {{.Release.Namespace}}
+spec:
+  credsSecret:
+    name: cred-secret
+  requestAutoCert: false
+  pools:
+    - servers: 1
+      volumesPerServer: 4
+      volumeClaimTemplate:
+        metadata:
+          name: data
+        spec:
+          storageClassName: datapool-volumes-ext4
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 5Gi
