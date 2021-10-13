@@ -13,10 +13,11 @@ This is an educational project.
 - [x] ZFS Storage Class
 - [x] Keycloak → id.chobert.fr
 - [x] Prometheus & Grafana → grafana.chobert.fr
-- [ ] Postgres Cluster
-- [ ] Minio Tenant
-- [ ] Redis Cluster
-- [ ] Gitlab
+- [x] Postgres Operator PGO
+- [x] Postgres Main Cluster
+- [x] Minio Operator
+- [x] Main Minio Tenant → minio.chobert.fr
+- [x] Gitlab
 
 ## Storage configuration
 

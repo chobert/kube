@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: id-chobert-oauth2
+  namespace: {{.Release.Namespace}}
+type: Opaque
+stringData:
+  provider: |
+    name: oauth2_generic
+    label: "id.chobert.fr"
+    app_id: "gitlab.chobert.fr"
+    app_secret: "36de066f-9f45-41f6-8aee-d193b27dac17"
+    args:
+      client_options:
+        site: "https://id.chobert.fr"
+        user_info_url: "/auth/realms/master/protocol/openid-connect/userinfo"
+        authorize_url: "/auth/realms/master/protocol/openid-connect/auth"
+        token_url: "/auth/realms/master/protocol/openid-connect/token"

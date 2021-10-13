@@ -1,0 +1,120 @@
+repositories:
+  - name: gitlab
+    url: https://charts.gitlab.io/
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+
+releases:
+  - name: secrets
+    namespace: gitlab
+    chart: ./charts/gitlab-secrets
+    secrets:
+      - gitlab-secrets.yaml
+      - redis-secrets.yaml
+
+  - name: redis
+    namespace: gitlab
+    chart: bitnami/redis
+    secrets:
+      - redis-secrets.yaml
+    values:
+      - global:
+          storageClass: datapool-volumes-ext4
+        master:
+          persistence:
+            size: 2Gi
+        replica:
+          replicaCount: 0
+
+  - name: gitlab
+    namespace: gitlab
+    chart: gitlab/gitlab
+    needs:
+      - secrets
+    values:
+      - global:
+          hosts:
+            domain: chobert.fr
+            https: true
+          ingress:
+            enable: false
+            configureCertmanager: false
+            tls:
+              enabled: false
+          psql:
+            host: postgres-cluster-main-primary.postgres-cluster-main.svc
+            port: 5432
+            database: gitlab
+            username: gitlab
+            password:
+              useSecret: true
+              secret: database-password
+              key: password
+          redis:
+            host: redis-master
+            port: 6379
+            password:
+              enabled: true
+              secret: redis-password
+              key: password
+          grafana:
+            enabled: false
+          registry:
+            bucket: gitlab-registry
+            storage:
+              secret: registry-storage-config
+              key: config
+          minio:
+            enable: false
+          appConfig:
+            omniauth:
+              enabled: true
+              allowSingleSignOn: true
+              autoLinkUser: true
+              providers:
+                - secret: id-chobert-oauth2
+
+          deployment:
+            annotations:
+              sidecar.istio.io/inject: "true"
+
+          gitaly:
+            enabled: true
+            persistence:
+              storageClass: datapool-volumes-ext4
+
+        gitlab:
+          minio:
+            enabled: false
+          gitaly:
+            persistence:
+              storageClass: datapool-volumes-ext4
+          # gitlab-shell:
+          #   workhorse:
+          #     serviceName: gitlab-webservice-default
+          #     port: 8181
+
+        certmanager:
+          installCRDs: false
+          install: false
+
+        nginx-ingress:
+          enabled: false
+
+        postgresql:
+          install: false
+
+        redis:
+          install: false
+
+        gitaly:
+          persistence:
+            storageClass: datapool-volumes-ext4
+
+  - name: ingress
+    namespace: gitlab
+    chart: ./charts/gitlab-ingress
+    values:
+      - host: gitlab.chobert.fr
+        certificate:
+          secretName: gitlab-cert

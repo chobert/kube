@@ -29,3 +29,23 @@ releases:
     needs:
       - istio-system/istio-base
       - istio-system/istiod
+    values:
+      - gateways:
+          istio-ingressgateway:
+            ports:
+              - port: 15021
+                targetPort: 15021
+                name: status-port
+                protocol: TCP
+              - port: 80
+                targetPort: 8080
+                name: http2
+                protocol: TCP
+              - port: 443
+                targetPort: 8443
+                name: https
+                protocol: TCP
+              - port: 2222
+                targetPort: 2222
+                name: gitlab-ssh
+                protocol: TCP
