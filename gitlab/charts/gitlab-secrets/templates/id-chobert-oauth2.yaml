@@ -9,10 +9,12 @@ stringData:
     name: oauth2_generic
     label: "id.chobert.fr"
     app_id: "gitlab.chobert.fr"
-    app_secret: "36de066f-9f45-41f6-8aee-d193b27dac17"
+    app_secret: {{.Values.oidcAppSecret | quote}}
     args:
       client_options:
         site: "https://id.chobert.fr"
         user_info_url: "/auth/realms/master/protocol/openid-connect/userinfo"
         authorize_url: "/auth/realms/master/protocol/openid-connect/auth"
         token_url: "/auth/realms/master/protocol/openid-connect/token"
+      user_response_structure:
+        id_path: ["sub"]
