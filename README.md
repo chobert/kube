@@ -11,13 +11,13 @@ This is an educational project.
 - [x] cert-manager
 - [x] Istio service mesh & Ingress
 - [x] ZFS Storage Class
-- [x] Keycloak → id.chobert.fr
-- [x] Prometheus & Grafana → grafana.chobert.fr
+- [x] Keycloak → [id.chobert.fr](https://id.chobert.fr)
+- [x] Prometheus & Grafana → [grafana.chobert.fr](https://gitlab.chobert.fr)
 - [x] Postgres Operator PGO
 - [x] Postgres Main Cluster
 - [x] Minio Operator
-- [x] Main Minio Tenant → minio.chobert.fr
-- [x] Gitlab
+- [x] Main Minio Tenant → [minio.chobert.fr](https://minio.chobert.fr)
+- [x] Gitlab → [gitlab.chobert.fr](https://gitlab.chobert.fr)
 
 ## Storage configuration
 
