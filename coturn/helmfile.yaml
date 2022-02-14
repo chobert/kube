@@ -1,0 +1,6 @@
+releases:
+  - name: coturn
+    namespace: coturn
+    chart: ./charts/coturn
+    secrets:
+      - secrets.yaml

@@ -17,6 +17,9 @@ spec:
     - name: gitlab
       databases:
         - gitlab
+    - name: matrix
+      databases:
+        - matrix
   instances:
     - name: instance1
       dataVolumeClaimSpec:

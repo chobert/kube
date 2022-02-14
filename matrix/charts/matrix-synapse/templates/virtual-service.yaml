@@ -1,0 +1,35 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{.Release.Name}}
+  namespace: {{.Release.Namespace}}
+spec:
+  hosts:
+    - {{.Values.host}}
+    - chobert.fr
+  gateways:
+    - {{.Release.Name}}
+    - istio-system/root-gateway
+  http:
+    - match:
+        - gateways:
+            - istio-system/root-gateway
+          uri:
+            prefix: "/.well-known/matrix/server"
+      route:
+        - destination:
+            host: well-known-federation-svc
+    - match:
+        - gateways:
+            - istio-system/root-gateway
+          uri:
+            prefix: "/.well-known/matrix"
+      route:
+        - destination:
+            host: synapse-svc
+    - match:
+        - gateways:
+            - {{.Release.Name}}
+      route:
+        - destination:
+            host: synapse-svc

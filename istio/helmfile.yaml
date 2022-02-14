@@ -49,3 +49,51 @@ releases:
                 targetPort: 2222
                 name: gitlab-ssh
                 protocol: TCP
+
+  - name: istio-default-gateway
+    chart: incubator/raw
+    namespace: istio-system
+    needs:
+      - istio-ingress
+    values:
+      - resources:
+          - apiVersion: cert-manager.io/v1
+            kind: Certificate
+            metadata:
+              name: root-certificate
+              namespace: istio-system
+            spec:
+              issuerRef:
+                name: letsencrypt
+                kind: ClusterIssuer
+              secretName: root-cert-secret
+              commonName: chobert.fr
+              dnsNames:
+                - chobert.fr
+
+          - apiVersion: networking.istio.io/v1alpha3
+            kind: Gateway
+            metadata:
+              name: root-gateway
+              namespace: istio-system
+            spec:
+              selector:
+                istio: ingressgateway
+              servers:
+                - port:
+                    number: 443
+                    name: https
+                    protocol: HTTPS
+                  tls:
+                    mode: SIMPLE
+                    credentialName: root-cert-secret
+                  hosts:
+                    - chobert.fr
+                - port:
+                    number: 80
+                    name: http
+                    protocol: HTTP
+                  tls:
+                    httpsRedirect: true # sends 301 redirect for http requests
+                  hosts:
+                    - chobert.fr
