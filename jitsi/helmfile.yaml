@@ -1,0 +1,31 @@
+repositories:
+  - name: jitsi
+    url: https://jitsi-contrib.github.io/jitsi-helm/
+
+releases:
+  - name: jitsi
+    namespace: jitsi
+    chart: jitsi/jitsi-meet
+    createNamespace: true
+    values:
+      - tz: Europe/Paris
+        publicURL: "https://jitsi.chobert.fr"
+        jvb:
+          service:
+            type: LoadBalancer
+          publicIP: 78.47.232.231
+          UDPPort: 30000
+          TCPPort: 30443
+        prosody:
+          persistence:
+            storageClassName: datapool-volumes-ext4
+            size: 1G
+    secrets:
+      - secrets.yaml
+  - name: jitsi-ingress
+    chart: ./charts/jitsi-ingress
+    namespace: jitsi
+    values:
+      - host: jitsi.chobert.fr
+        certificate:
+          secretName: jitsi-ingress-cert
