@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "{{.Release.Name}}-set"
+  namespace: {{.Release.Namespace}}
+spec:
+  selector:
+    matchLabels:
+      app: synapse
+  serviceName: synapse
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: synapse
+        sidecar.istio.io/inject: "true"
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+    spec:
+      terminationGracePeriodSeconds: 10
+      initContainers:
+        - name: chdir
+          image: alpine:3
+          command: ["/bin/sh", "-c", "chown 991:991 -R /data && sleep 5"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      containers:
+        - name: synapse
+          image: matrixdotorg/synapse:v1.47.0
+          ports:
+            - name: web
+              containerPort: 8008
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: config
+              mountPath: /data/homeserver.yaml
+              subPath: homeserver.yaml
+            - name: signing-key
+              mountPath: /data/signing_key
+              subPath: key
+            - name: log-config
+              mountPath: /data/log_config
+              subPath: config
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8008
+          env:
+            - name: UID
+              value: "991"
+            - name: GID
+              value: "991"
+      volumes:
+        - name: config
+          configMap:
+            name: homeserver-config
+        - name: signing-key
+          configMap:
+            name: signing-key
+        - name: log-config
+          configMap:
+            name: log-config
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteMany"]
+        storageClassName: datapool-volumes-ext4
+        resources:
+          requests:
+            storage: 1Gi

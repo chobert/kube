@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: well-known-federation
+  namespace: {{.Release.Namespace}}
+  labels:
+    app: well-known-federation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: well-known-federation
+  template:
+    metadata:
+      labels:
+        app: well-known-federation
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+        - name: web
+          image: nginx
+          ports:
+            - name: web
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: content
+              mountPath: "/usr/share/nginx/html/.well-known/matrix/server"
+              subPath: server
+      volumes:
+        - name: content
+          configMap:
+            name: well-known-federation-content

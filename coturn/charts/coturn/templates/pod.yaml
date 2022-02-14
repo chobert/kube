@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{.Release.Name}}
+  namespace: {{.Release.Namespace}}
+spec:
+  hostNetwork: true
+  nodeName: master01.kube.chobert.net
+  containers:
+    - name: coturn
+      image: ghcr.io/coturn/coturn:4.5-alpine
+      args: ["-c", "/etc/turnserver.conf"]
+      volumeMounts:
+        - name: config
+          mountPath: "/etc/turnserver.conf"
+          subPath: turnserver.conf
+  volumes:
+    - name: config
+      configMap:
+        name: "{{.Release.Name}}-coturn-config"

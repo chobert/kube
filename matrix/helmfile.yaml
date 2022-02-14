@@ -1,0 +1,9 @@
+releases:
+  - name: synapse
+    namespace: matrix
+    createNamespace: true
+    chart: ./charts/matrix-synapse
+    values:
+      - host: matrix.chobert.fr
+    secrets:
+      - secrets.yaml

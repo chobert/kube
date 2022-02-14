@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: well-known-federation-content
+  namespace: {{.Release.Namepsace}}
+data:
+  server: |
+    {"m.server":"matrix.chobert.fr:443"}
