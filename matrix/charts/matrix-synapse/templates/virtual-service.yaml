@@ -15,18 +15,10 @@ spec:
         - gateways:
             - istio-system/root-gateway
           uri:
-            prefix: "/.well-known/matrix/server"
-      route:
-        - destination:
-            host: well-known-federation-svc
-    - match:
-        - gateways:
-            - istio-system/root-gateway
-          uri:
             prefix: "/.well-known/matrix"
       route:
         - destination:
-            host: synapse-svc
+            host: well-known-federation-svc
     - match:
         - gateways:
             - {{.Release.Name}}

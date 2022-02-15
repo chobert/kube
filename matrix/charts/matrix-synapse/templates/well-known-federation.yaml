@@ -27,6 +27,12 @@ spec:
             - name: content
               mountPath: "/usr/share/nginx/html/.well-known/matrix/server"
               subPath: server
+            - name: content
+              mountPath: "/usr/share/nginx/html/.well-known/matrix/client"
+              subPath: client
+            - name: content
+              mountPath: "/etc/nginx/nginx.conf"
+              subPath: config
       volumes:
         - name: content
           configMap:
