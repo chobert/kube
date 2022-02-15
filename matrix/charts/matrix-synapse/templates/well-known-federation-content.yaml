@@ -6,3 +6,51 @@ metadata:
 data:
   server: |
     {"m.server":"matrix.chobert.fr:443"}
+  client: |
+    {
+      "m.homeserver": {
+        "base_url": "https://matrix.chobert.fr/"
+      },
+      "im.vector.riot.jitsi": {
+        "preferredDomain": "jitsi.chobert.fr"
+      }
+    }
+  config: |
+    user  nginx;
+    worker_processes  auto;
+
+    error_log  /var/log/nginx/error.log notice;
+    pid        /var/run/nginx.pid;
+
+    events {
+      worker_connections  1024;
+    }
+
+    http {
+      include       /etc/nginx/mime.types;
+      default_type application/json;
+
+      log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent" "$http_x_forwarded_for"';
+
+      access_log  /var/log/nginx/access.log  main;
+
+      sendfile        on;
+
+      keepalive_timeout  65;
+
+      gzip  on;
+
+      server {
+        listen 80;
+        server_name localhost;
+
+        location / {
+          root   /usr/share/nginx/html;
+        }
+
+        add_header Access-Control-Allow-Origin *;
+        add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS';
+      }
+    }
