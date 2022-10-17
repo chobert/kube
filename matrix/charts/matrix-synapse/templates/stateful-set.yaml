@@ -13,9 +13,6 @@ spec:
     metadata:
       labels:
         app: synapse
-        sidecar.istio.io/inject: "true"
-      annotations:
-        sidecar.istio.io/rewriteAppHTTPProbers: "true"
     spec:
       terminationGracePeriodSeconds: 10
       initContainers:
