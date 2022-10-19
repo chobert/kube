@@ -7,10 +7,3 @@ releases:
     chart: metallb/metallb
     namespace: metallb-system
     createNamespace: true
-    values:
-      - configInline:
-          address-pools:
-            - name: default
-              protocol: layer2
-              addresses:
-                - '{{requiredEnv "LOAD_BALANCER_IP"}}/32'

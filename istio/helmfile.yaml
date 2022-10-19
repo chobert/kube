@@ -2,53 +2,49 @@ repositories:
   - name: incubator
     url: https://charts.helm.sh/incubator
   - name: istio
-    url: git+https://github.com/istio/istio@manifests/charts?sparse=0&ref=1.11.3
-  - name: istio-control
-    url: git+https://github.com/istio/istio@manifests/charts/istio-control?sparse=0&ref=1.11.3
-  - name: istio-gateways
-    url: git+https://github.com/istio/istio@manifests/charts/gateways?sparse=0&ref=1.11.3
+    url: https://istio-release.storage.googleapis.com/charts
 
 releases:
   - name: istio-base
-    chart: istio/base
     namespace: istio-system
+    chart: istio/base
+    version: 1.12.9
     createNamespace: true
-    needs:
-      - coredns/coredns
-      - metallb-system/metallb
 
   - name: istiod
-    chart: istio-control/istio-discovery
     namespace: istio-system
+    chart: istio/istiod
+    version: 1.12.9
     needs:
       - istio-system/istio-base
 
   - name: istio-ingress
-    chart: istio-gateways/istio-ingress
     namespace: istio-system
+    chart: istio/gateway
+    version: 1.12.9
     needs:
       - istio-system/istio-base
       - istio-system/istiod
     values:
-      - gateways:
-          istio-ingressgateway:
-            ports:
-              - port: 15021
-                targetPort: 15021
-                name: status-port
-                protocol: TCP
-              - port: 80
-                targetPort: 8080
-                name: http2
-                protocol: TCP
-              - port: 443
-                targetPort: 8443
-                name: https
-                protocol: TCP
-              - port: 2222
-                targetPort: 2222
-                name: gitlab-ssh
-                protocol: TCP
+      - service:
+          loadBalancerIP: 78.47.232.231
+          ports:
+            - port: 15021
+              targetPort: 15021
+              name: status-port
+              protocol: TCP
+            - port: 80
+              targetPort: 80
+              name: http2
+              protocol: TCP
+            - port: 443
+              targetPort: 443
+              name: https
+              protocol: TCP
+            - port: 2222
+              targetPort: 2222
+              name: gitlab-ssh
+              protocol: TCP
 
   - name: istio-default-gateway
     chart: incubator/raw
