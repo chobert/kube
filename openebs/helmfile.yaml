@@ -9,9 +9,6 @@ releases:
     namespace: openebs
     chart: openebs-zfslocalpv/zfs-localpv
     createNamespace: true
-    values:
-      - zfsNode:
-          kubeletDir: /var/snap/microk8s/common/var/lib/kubelet/
 
   - name: storage-class
     namespace: openebs

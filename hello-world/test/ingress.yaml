@@ -1,0 +1,20 @@
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: whoami
+  namespace: hello-world
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls.certresolver: le
+spec:
+  rules:
+    - host: hello.chobert.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: whoami
+                port:
+                  number: 80

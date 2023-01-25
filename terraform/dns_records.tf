@@ -6,11 +6,11 @@ data "cloudflare_zones" "chobert_net" {
 }
 
 resource "cloudflare_record" "instance_record" {
-  count = length(hcloud_server.master)
+  for_each = local.instance_name_set
 
   zone_id = data.cloudflare_zones.chobert_net.zones[0].id
-  name    = hcloud_server.master[count.index].name
-  value   = hcloud_server.master[count.index].ipv4_address
+  name    = hcloud_server.master[each.key].name
+  value   = hcloud_server.master[each.key].ipv4_address
   type    = "A"
   ttl     = 1
 }

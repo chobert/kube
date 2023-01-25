@@ -6,7 +6,7 @@ resource "hcloud_floating_ip" "lb" {
 
 resource "hcloud_floating_ip_assignment" "main" {
   floating_ip_id = hcloud_floating_ip.lb.id
-  server_id      = hcloud_server.master[0].id
+  server_id      = hcloud_server.master["master01"].id
 
   lifecycle {
     ignore_changes = [server_id]

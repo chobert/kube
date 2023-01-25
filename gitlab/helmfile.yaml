@@ -74,10 +74,6 @@ releases:
               providers:
                 - secret: id-chobert-oauth2
 
-          deployment:
-            annotations:
-              sidecar.istio.io/inject: "true"
-
           gitaly:
             enabled: true
             persistence:

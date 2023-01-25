@@ -5,7 +5,7 @@ metadata:
   namespace: {{.Release.Namespace}}
 spec:
   hostNetwork: true
-  nodeName: master01.kube.chobert.net
+  nodeName: master01
   containers:
     - name: coturn
       image: ghcr.io/coturn/coturn:4.5-alpine
