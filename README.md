@@ -3,10 +3,12 @@
 ## Features
 
 - Architecture
+  - [x] Hetzner cloud hosting
+  - [x] Hetzner private network
   - [x] MicroOS
   - [x] K3S
   - [ ] Kube-vip
-  - [ ] Wireguard private network
+  - [ ] Cilium networking
   - [ ] Istio Service Mesh
   - [ ] Istio Ingress
   - [ ] Cert Manager
