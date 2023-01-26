@@ -1,7 +1,7 @@
 resource "hcloud_floating_ip" "lb" {
   name          = "lb"
   type          = "ipv4"
-  home_location = "nbg1"
+  home_location = var.location
 }
 
 resource "hcloud_floating_ip_assignment" "main" {

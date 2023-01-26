@@ -31,15 +31,35 @@ locals {
   ]
 
   k3s_config_common = {
-    disable-cloud-controller    = true
-    token                       = random_password.k3s_token.result
-    disable                     = ["local-storage", "traefik", "servicelb"]
+    disable-cloud-controller = true
+    token                    = random_password.k3s_token.result
+    disable = [
+      "local-storage", # we use zfs localpv instead
+      "traefik",       # we use istio ingress
+      "servicelb"      # we use kube-vip
+    ]
     node-taint                  = []
     write-kubeconfig-mode       = "0644"
     node-label                  = ["k3s_upgrade=true", "node.kubernetes.io/exclude-from-external-load-balancers=true"]
     kubelet-arg                 = ["cloud-provider=external", "volume-plugin-dir=/var/lib/kubelet/volumeplugins"]
     kube-controller-manager-arg = "flex-volume-plugin-dir=/var/lib/kubelet/volumeplugins"
     flannel-iface               = "eth1"
+
+    # required for cilium
+    disable-network-policy = true
+    flannel-backend        = "none"
   }
+
+  cilium_values = <<EOT
+ipam:
+ operator:
+  clusterPoolIPv4PodCIDRList:
+   - ${local.cluster_cidr_ipv4}
+devices: "eth1"
+  EOT
+
+  cert_manager_values = <<EOT
+installCRDs: true
+  EOT
 }
 

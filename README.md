@@ -7,8 +7,9 @@
   - [x] Hetzner private network
   - [x] MicroOS
   - [x] K3S
-  - [ ] Kube-vip
+  - [ ] Hetzner CCM
   - [ ] Cilium networking
+  - [ ] Kube-vip
   - [ ] Istio Service Mesh
   - [ ] Istio Ingress
   - [ ] Cert Manager

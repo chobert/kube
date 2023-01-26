@@ -36,7 +36,7 @@ resource "hcloud_server" "master" {
   server_type        = "cx41"
   image              = data.hcloud_image.microos_final.id
   placement_group_id = hcloud_placement_group.master.id
-  location           = "nbg1"
+  location           = var.location
 
   ssh_keys = [hcloud_ssh_key.paul.id, hcloud_ssh_key.provisioning.id]
 

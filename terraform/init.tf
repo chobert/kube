@@ -6,7 +6,6 @@ resource "null_resource" "kustomization" {
     host        = hcloud_server.master["master01"].ipv4_address
   }
 
-  # Upload kustomization.yaml, containing Hetzner CSI & CSM, as well as kured.
   provisioner "file" {
     content = yamlencode({
       apiVersion = "kustomize.config.k8s.io/v1beta1"
@@ -16,28 +15,35 @@ resource "null_resource" "kustomization" {
         "https://github.com/hetznercloud/hcloud-cloud-controller-manager/releases/download/${local.ccm_version}/ccm-networks.yaml",
         "https://github.com/weaveworks/kured/releases/download/${local.kured_version}/kured-${local.kured_version}-dockerhub.yaml",
         "https://raw.githubusercontent.com/rancher/system-upgrade-controller/master/manifests/system-upgrade-controller.yaml",
-        "hcloud-csi.yml"
+        "cilium.yaml",
+        "cert_manager.yaml"
       ],
       patchesStrategicMerge = [
-        file("${path.module}/kustomize/system-upgrade-controller.yaml"),
-        "kured.yaml",
         "ccm.yaml",
       ]
     })
+
     destination = "/var/post_install/kustomization.yaml"
   }
 
-  # Upload traefik ingress controller config
   provisioner "file" {
     content = templatefile(
-      "${path.module}/templates/traefik_ingress.yaml.tpl",
+      "${path.module}/templates/cilium.yaml.tpl",
       {
-        values = indent(4, trimspace(local.traefik_values))
+        values = indent(4, trimspace(local.cilium_values))
     })
-    destination = "/var/post_install/traefik_ingress.yaml"
+    destination = "/var/post_install/cilium.yaml"
   }
 
-  # Upload the CCM patch config
+  provisioner "file" {
+    content = templatefile(
+      "${path.module}/templates/cert_manager.yaml.tpl",
+      {
+        values = indent(4, trimspace(local.cert_manager_values))
+    })
+    destination = "/var/post_install/ciliucert_manager.yaml"
+  }
+
   provisioner "file" {
     content = templatefile(
       "${path.module}/templates/ccm.yaml.tpl",
@@ -45,28 +51,9 @@ resource "null_resource" "kustomization" {
         cluster_cidr_ipv4   = local.cluster_cidr_ipv4
         default_lb_location = var.load_balancer_location
         using_klipper_lb    = local.using_klipper_lb
+
     })
     destination = "/var/post_install/ccm.yaml"
-  }
-
-  # Upload the system upgrade controller plans config
-  provisioner "file" {
-    content = templatefile(
-      "${path.module}/templates/plans.yaml.tpl",
-      {
-        channel = var.initial_k3s_channel
-    })
-    destination = "/var/post_install/plans.yaml"
-  }
-
-  # Upload the cert-manager config
-  provisioner "file" {
-    content = templatefile(
-      "${path.module}/templates/cert_manager.yaml.tpl",
-      {
-        values = indent(4, trimspace(local.cert_manager_values))
-    })
-    destination = "/var/post_install/cert_manager.yaml"
   }
 
   provisioner "file" {
@@ -79,7 +66,6 @@ resource "null_resource" "kustomization" {
     destination = "/var/post_install/kured.yaml"
   }
 
-  # Deploy secrets, logging is automatically disabled due to sensitive variables
   provisioner "remote-exec" {
     inline = [
       "set -ex",
@@ -125,16 +111,7 @@ resource "null_resource" "kustomization" {
         "sleep 5", # important as the system upgrade controller CRDs sometimes don't get ready right away, especially with Cilium.
         "kubectl -n system-upgrade apply -f /var/post_install/plans.yaml"
       ],
-      local.has_external_load_balancer ? [] : [
-        <<-EOT
-      timeout 180 bash <<EOF
-      until [ -n "\$(kubectl get -n ${lookup(local.ingress_controller_namespace_names, local.ingress_controller)} service/${lookup(local.ingress_controller_service_names, local.ingress_controller)} --output=jsonpath='{.status.loadBalancer.ingress[0].${var.lb_hostname != "" ? "hostname" : "ip"}}' 2> /dev/null)" ]; do
-          echo "Waiting for load-balancer to get an IP..."
-          sleep 2
-      done
-      EOF
-      EOT
-    ])
+    )
   }
 
   depends_on = [
