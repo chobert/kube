@@ -1,6 +1,7 @@
 locals {
   instance_name     = [for i in range(var.instances_count) : format("master%02d", i + 1)]
   instance_name_set = toset(local.instance_name)
+  hostname          = { for name in isntance_name : name => "${name}.kube.chobert.net" }
 }
 
 resource "tls_private_key" "provisioning" {
@@ -8,17 +9,6 @@ resource "tls_private_key" "provisioning" {
   rsa_bits  = 4096
 }
 
-
-data "template_file" "cloud_init" {
-  for_each = local.instance_name_set
-
-  template = file("./cloud-config.yml")
-
-  vars = {
-    hostname    = "${each.key}.kube.chobert.net"
-    floating_ip = hcloud_floating_ip.lb.ip_address
-  }
-}
 
 data "hcloud_image" "microos_final" {
   id = "97380413"
@@ -32,7 +22,7 @@ resource "hcloud_placement_group" "master" {
 resource "hcloud_server" "master" {
   for_each = local.instance_name_set
 
-  name               = data.template_file.cloud_init[each.key].vars.hostname
+  name               = local.hostname[each.key]
   server_type        = "cx41"
   image              = data.hcloud_image.microos_final.id
   placement_group_id = hcloud_placement_group.master.id
@@ -40,7 +30,12 @@ resource "hcloud_server" "master" {
 
   ssh_keys = [hcloud_ssh_key.paul.id, hcloud_ssh_key.provisioning.id]
 
-  user_data = data.template_file.cloud_init[each.key].rendered
+  user_data = templatefile(
+    "./cloud-config.yml",
+    {
+      hostname = locals.hostname[each.key]
+    }
+  )
 }
 
 resource "hcloud_server_network" "master" {
