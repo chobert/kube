@@ -33,7 +33,7 @@ locals {
   k3s_config_common = {
     disable-cloud-controller    = true
     token                       = random_password.k3s_token.result
-    disable                     = ["local-storage"]
+    disable                     = ["local-storage", "traefik", "servicelb"]
     node-taint                  = []
     write-kubeconfig-mode       = "0644"
     node-label                  = ["k3s_upgrade=true", "node.kubernetes.io/exclude-from-external-load-balancers=true"]
@@ -41,58 +41,5 @@ locals {
     kube-controller-manager-arg = "flex-volume-plugin-dir=/var/lib/kubelet/volumeplugins"
     flannel-iface               = "eth1"
   }
-
-  traefik_values = <<EOT
-deployment:
-  replicas: ${local.ingress_replica_count}
-globalArguments: []
-service:
-  enabled: true
-  type: LoadBalancer
-%{if !local.using_klipper_lb~}
-  annotations:
-    "load-balancer.hetzner.cloud/name": "${var.cluster_name}"
-    "load-balancer.hetzner.cloud/use-private-ip": "true"
-    "load-balancer.hetzner.cloud/disable-private-ingress": "true"
-    "load-balancer.hetzner.cloud/ipv6-disabled": "${var.load_balancer_disable_ipv6}"
-    "load-balancer.hetzner.cloud/location": "${var.load_balancer_location}"
-    "load-balancer.hetzner.cloud/type": "${var.load_balancer_type}"
-    "load-balancer.hetzner.cloud/uses-proxyprotocol": "true"
-%{if var.lb_hostname != ""~}
-    "load-balancer.hetzner.cloud/hostname": "${var.lb_hostname}"
-%{endif~}
-%{endif~}
-ports:
-  web:
-%{if var.traefik_redirect_to_https~}
-    redirectTo: websecure
-%{endif~}
-%{if !local.using_klipper_lb~}
-    proxyProtocol:
-      trustedIPs:
-        - 127.0.0.1/32
-        - 10.0.0.0/8
-    forwardedHeaders:
-      trustedIPs:
-        - 127.0.0.1/32
-        - 10.0.0.0/8
-  websecure:
-    proxyProtocol:
-      trustedIPs:
-        - 127.0.0.1/32
-        - 10.0.0.0/8
-    forwardedHeaders:
-      trustedIPs:
-        - 127.0.0.1/32
-        - 10.0.0.0/8
-%{endif~}
-%{if var.traefik_additional_options != ""~}
-additionalArguments:
-%{for option in var.traefik_additional_options~}
-- "${option}"
-%{endfor~}
-%{endif~}
-  EOT
-
 }
 
