@@ -43,7 +43,7 @@ spec:
     pgbackrest:
       configuration:
         - secret:
-            name: pgbackrest-backblaze-s3-conf
+            name: pgbackrest-s3-conf
       global:
         repo1-path: /pgbackrest/{{.Release.Namespace}}/{{.Release.Name}}/repo1
       manual:
@@ -53,6 +53,6 @@ spec:
       repos:
         - name: repo1
           s3:
-            bucket: chobert-database-backups
-            endpoint: 0a86a9442706a574ee2f85897b8ae44c.r2.cloudflarestorage.com
-            region: us-east-1
+            bucket: net-chobert-kube-postgres-backups
+            endpoint: https://s3.fr-par.scw.cloud
+            region: fr-par
