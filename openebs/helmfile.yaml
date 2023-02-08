@@ -9,9 +9,6 @@ releases:
     namespace: openebs
     chart: openebs-zfslocalpv/zfs-localpv
     createNamespace: true
-    values:
-      - zfsNode:
-          kubeletDir: /var/snap/microk8s/common/var/lib/kubelet/
 
   - name: storage-class
     namespace: openebs
@@ -37,3 +34,13 @@ releases:
             parameters:
               poolname: datapool/volumes/block
             provisioner: zfs.csi.openebs.io
+          - apiVersion: storage.k8s.io/v1
+            kind: StorageClass
+            metadata:
+              name: datapool-volumes-ext4-retained
+            allowVolumeExpansion: true
+            parameters:
+              poolname: datapool/volumes/ext4
+              fstype: "ext4"
+            provisioner: zfs.csi.openebs.io
+            reclaimPolicy: Retain

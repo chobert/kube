@@ -1,13 +1,13 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: "{{.Release.Name}}-cert"
-  namespace: istio-system
+  name: {{.Release.Name}}
+  namespace: istio-ingress
 spec:
   issuerRef:
     name: letsencrypt
     kind: ClusterIssuer
-  secretName: {{.Values.certificate.secretName}}
+  secretName: {{.Release.Namespace}}-{{.Release.Name}}-cert
   commonName: {{.Values.host}}
   dnsNames:
     - {{.Values.host}}

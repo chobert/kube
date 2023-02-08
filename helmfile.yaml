@@ -1,5 +1,7 @@
 helmfiles:
   - path: metallb/helmfile.yaml
-  - path: cert-manager/helmfile.yaml
   - path: istio/helmfile.yaml
   - path: hello-world/helmfile.yaml
+  - path: openebs/helmfile.yaml
+  - path: postgres-operator/helmfile.yaml
+  - path: postgres-cluster-main/helmfile.yaml

@@ -10,8 +10,6 @@ releases:
       - secrets.yaml
     values:
       - grafana:
-          annotations:
-            sidecar.istio.io/inject: "true"
           ingress:
             enabled: false
           persistence:
@@ -39,5 +37,3 @@ releases:
     namespace: prometheus
     values:
       - host: grafana.chobert.fr
-        certificate:
-          secretName: grafana-cert

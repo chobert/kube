@@ -5,7 +5,7 @@ metadata:
   namespace: {{.Release.Namespace}}
 spec:
   selector:
-    istio: ingressgateway
+    app: istio-ingressgateway
   servers:
     - port:
         number: 443
@@ -18,7 +18,7 @@ spec:
         - {{.Values.host}}
     - port:
         number: 80
-        name: http
+        name: http2
         protocol: HTTP
       tls:
         httpsRedirect: true # sends 301 redirect for http requests

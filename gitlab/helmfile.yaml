@@ -33,6 +33,8 @@ releases:
       - secrets
     values:
       - global:
+          webservice:
+            replicaCount: 1
           hosts:
             domain: chobert.fr
             https: true
@@ -74,10 +76,6 @@ releases:
               providers:
                 - secret: id-chobert-oauth2
 
-          deployment:
-            annotations:
-              sidecar.istio.io/inject: "true"
-
           gitaly:
             enabled: true
             persistence:
@@ -89,6 +87,8 @@ releases:
           gitaly:
             persistence:
               storageClass: datapool-volumes-ext4
+          webservice:
+            replicaCount: 1
           # gitlab-shell:
           #   workhorse:
           #     serviceName: gitlab-webservice-default

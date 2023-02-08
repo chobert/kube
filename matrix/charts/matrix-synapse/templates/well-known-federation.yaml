@@ -14,7 +14,6 @@ spec:
     metadata:
       labels:
         app: well-known-federation
-        sidecar.istio.io/inject: "true"
     spec:
       containers:
         - name: web

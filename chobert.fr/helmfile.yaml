@@ -1,0 +1,52 @@
+repositories:
+  - name: incubator
+    url: https://charts.helm.sh/incubator
+
+releases:
+  - name: chobert-fr
+    namespace: chobert-fr
+    createNamespace: true
+    chart: incubator/raw
+    values:
+      - resources:
+        - apiVersion: cert-manager.io/v1
+          kind: Certificate
+          metadata:
+            name: chobert-fr
+            namespace: istio-ingress
+          spec:
+            issuerRef:
+              name: letsencrypt
+              kind: ClusterIssuer
+            secretName: chobert-fr-cert
+            commonName: chobert.fr
+            dnsNames:
+              - chobert.fr
+            duration: 2160h # 90d
+            renewBefore: 360h # 15d
+        - apiVersion: networking.istio.io/v1alpha3
+          kind: Gateway
+          metadata:
+            name: chobert-fr
+            namespace: chobert-fr
+          spec:
+            selector:
+              app: istio-ingressgateway
+            servers:
+              - port:
+                  number: 80
+                  name: http
+                  protocol: HTTP
+                tls:
+                  httpsRedirect: true
+                hosts:
+                  - chobert.fr
+              - port:
+                  number: 443
+                  name: https
+                  protocol: HTTPS
+                tls:
+                  mode: SIMPLE
+                  credentialName: chobert-fr-cert
+                hosts:
+                  - chobert.fr

@@ -2,98 +2,46 @@ repositories:
   - name: incubator
     url: https://charts.helm.sh/incubator
   - name: istio
-    url: git+https://github.com/istio/istio@manifests/charts?sparse=0&ref=1.11.3
-  - name: istio-control
-    url: git+https://github.com/istio/istio@manifests/charts/istio-control?sparse=0&ref=1.11.3
-  - name: istio-gateways
-    url: git+https://github.com/istio/istio@manifests/charts/gateways?sparse=0&ref=1.11.3
+    url: https://istio-release.storage.googleapis.com/charts
 
 releases:
   - name: istio-base
     chart: istio/base
     namespace: istio-system
     createNamespace: true
-    needs:
-      - coredns/coredns
-      - metallb-system/metallb
 
   - name: istiod
-    chart: istio-control/istio-discovery
+    chart: istio/istiod
     namespace: istio-system
     needs:
       - istio-system/istio-base
+    values:
+      - pilot:
+          autoscaleMin: 2
 
-  - name: istio-ingress
-    chart: istio-gateways/istio-ingress
-    namespace: istio-system
+  - name: istio-ingressgateway
+    chart: istio/gateway
+    namespace: istio-ingress
+    createNamespace: false
     needs:
       - istio-system/istio-base
       - istio-system/istiod
     values:
-      - gateways:
-          istio-ingressgateway:
-            ports:
-              - port: 15021
-                targetPort: 15021
-                name: status-port
-                protocol: TCP
-              - port: 80
-                targetPort: 8080
-                name: http2
-                protocol: TCP
-              - port: 443
-                targetPort: 8443
-                name: https
-                protocol: TCP
-              - port: 2222
-                targetPort: 2222
-                name: gitlab-ssh
-                protocol: TCP
-
-  - name: istio-default-gateway
-    chart: incubator/raw
-    namespace: istio-system
-    needs:
-      - istio-ingress
-    values:
-      - resources:
-          - apiVersion: cert-manager.io/v1
-            kind: Certificate
-            metadata:
-              name: root-certificate
-              namespace: istio-system
-            spec:
-              issuerRef:
-                name: letsencrypt
-                kind: ClusterIssuer
-              secretName: root-cert-secret
-              commonName: chobert.fr
-              dnsNames:
-                - chobert.fr
-
-          - apiVersion: networking.istio.io/v1alpha3
-            kind: Gateway
-            metadata:
-              name: root-gateway
-              namespace: istio-system
-            spec:
-              selector:
-                istio: ingressgateway
-              servers:
-                - port:
-                    number: 443
-                    name: https
-                    protocol: HTTPS
-                  tls:
-                    mode: SIMPLE
-                    credentialName: root-cert-secret
-                  hosts:
-                    - chobert.fr
-                - port:
-                    number: 80
-                    name: http
-                    protocol: HTTP
-                  tls:
-                    httpsRedirect: true # sends 301 redirect for http requests
-                  hosts:
-                    - chobert.fr
+      - service:
+          ports:
+            - name: status-port
+              port: 15021
+              protocol: TCP
+              targetPort: 15021
+            - name: http2
+              port: 80
+              protocol: TCP
+              targetPort: 80
+            - name: https
+              port: 443
+              protocol: TCP
+              targetPort: 443
+            - name: ssh
+              port: 2222
+              protocol: TCP
+              targetPort: 2222

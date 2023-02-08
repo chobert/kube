@@ -4,7 +4,6 @@ metadata:
   name: {{.Release.Name}}
   namespace: {{.Release.Namespace}}
 spec:
-  image: registry.developers.crunchydata.com/crunchydata/crunchy-postgres:centos8-14.0-0
   postgresVersion: 14
   users:
     - name: postgres
@@ -22,6 +21,7 @@ spec:
         - matrix
   instances:
     - name: instance1
+      replica: 2
       dataVolumeClaimSpec:
         storageClassName: datapool-volumes-ext4
         accessModes:
@@ -29,9 +29,18 @@ spec:
         resources:
           requests:
             storage: 10Gi
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  postgres-operator.crunchydata.com/cluster: {{.Release.Name}}
+                  postgres-operator.crunchydata.com/instance-set: instance1
   backups:
     pgbackrest:
-      image: registry.developers.crunchydata.com/crunchydata/crunchy-pgbackrest:centos8-2.35-0
       configuration:
         - secret:
             name: pgbackrest-backblaze-s3-conf
@@ -45,5 +54,5 @@ spec:
         - name: repo1
           s3:
             bucket: chobert-database-backups
-            endpoint: s3.us-west-001.backblazeb2.com
-            region: us-west-001
+            endpoint: 0a86a9442706a574ee2f85897b8ae44c.r2.cloudflarestorage.com
+            region: us-east-1

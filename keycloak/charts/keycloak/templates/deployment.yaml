@@ -17,25 +17,21 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: quay.io/keycloak/keycloak:15.0.2
+          image: quay.io/keycloak/keycloak:20.0.3
+          args: 
+            - start
+            - "--hostname-strict=false"
+            - "--http-relative-path=/auth"
+            - "--proxy=edge"
+            - "--health-enabled=true"
           env:
-            - name: KEYCLOAK_USER
-              value: paul
-            - name: KEYCLOAK_PASSWORD
-              value: {{.Values.adminPassword | quote}}
-            - name: PROXY_ADDRESS_FORWARDING
-              value: "true"
-            - name: DB_VENDOR
+            - name: KC_DB
               value: postgres
-            - name: DB_ADDR
-              value: postgres-cluster-main-primary.postgres-cluster-main.svc
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_DATABASE
+            - name: KC_DB_URL
+              value: jdbc:postgresql://postgres-cluster-main-primary.postgres-cluster-main.svc/keycloak
+            - name: KC_DB_USERNAME
               value: keycloak
-            - name: DB_USER
-              value: keycloak
-            - name: DB_PASSWORD
+            - name: KC_DB_PASSWORD
               value: {{.Values.databasePassword | quote}}
           ports:
             - name: http
@@ -44,5 +40,5 @@ spec:
               containerPort: 8443
           readinessProbe:
             httpGet:
-              path: /auth/realms/master
+              path: /auth/health/ready
               port: 8080

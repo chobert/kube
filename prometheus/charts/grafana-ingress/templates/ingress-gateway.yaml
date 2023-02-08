@@ -13,7 +13,7 @@ spec:
         protocol: HTTPS
       tls:
         mode: SIMPLE
-        credentialName: {{.Values.certificate.secretName}}
+        credentialName: {{.Release.Namespace}}-{{.Release.Name}}-cert
       hosts:
         - {{.Values.host}}
     - port:

@@ -1,0 +1,50 @@
+#cloud-config
+
+debug: True
+
+resize_rootfs: false
+
+preserve_hostname: false
+hostname: ${hostname}
+
+growpart:
+  devices: ["/var"]
+
+
+write_files:
+  - content: |
+      BOOTPROTO='dhcp'
+      STARTMODE='auto'
+      IPADDR_0='${floating_ip}'
+      NETMASK_0='255.255.255.255'
+      LABEL_0='0'
+    path: /etc/sysconfig/network/ifcfg-eth0
+  - content: |
+      BOOTPROTO='dhcp'
+      STARTMODE='auto'
+    path: /etc/sysconfig/network/ifcfg-eth1
+  - content: |
+      [rancher-k3s-common-stable]
+      name=Rancher K3s Common (stable)
+      baseurl=https://rpm.rancher.io/k3s/stable/common/microos/noarch
+      enabled=1
+      gpgcheck=1
+      repo_gpgcheck=0
+      gpgkey=https://rpm.rancher.io/public.key
+    path: /etc/zypp/repos.d/rancher-k3s-common.repo
+  - content: |
+      REBOOT_METHOD=kured
+    path: /etc/transactional-update.conf
+
+runcmd:
+  # Bounds the amount of logs that can survive on the system
+  - [sed, '-i', 's/#SystemMaxUse=/SystemMaxUse=3G/g', /etc/systemd/journald.conf]
+  - [sed, '-i', 's/#MaxRetentionSec=/MaxRetentionSec=1week/g', /etc/systemd/journald.conf]
+
+  # Reduces the default number of snapshots from 2-10 number limit, to 4 and from 4-10 number limit important, to 2
+  - [sed, '-i', 's/NUMBER_LIMIT="2-10"/NUMBER_LIMIT="4"/g', /etc/snapper/configs/root]
+  - [sed, '-i', 's/NUMBER_LIMIT_IMPORTANT="4-10"/NUMBER_LIMIT_IMPORTANT="3"/g', /etc/snapper/configs/root]
+
+  # Disables unneeded services
+  - [systemctl, 'restart', 'sshd']
+  - [systemctl, disable, '--now', 'rebootmgr.service']
