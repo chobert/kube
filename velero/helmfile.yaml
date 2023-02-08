@@ -1,0 +1,57 @@
+repositories:
+  - name: vmware-tanzu
+    url: https://vmware-tanzu.github.io/helm-charts
+  - name: incubator
+    url: https://charts.helm.sh/incubator
+
+releases:
+  - name: zfs-snapshot-class
+    namespace: openebs
+    chart: incubator/raw
+    values:
+      - resources:
+          - kind: VolumeSnapshotClass
+            apiVersion: snapshot.storage.k8s.io/v1beta1
+            metadata:
+              name: zfspv-snapclass
+              annotations:
+                snapshot.storage.kubernetes.io/is-default-class: "true"
+            driver: zfs.csi.openebs.io
+            deletionPolicy: Delete
+  - name: velero
+    namespace: velero
+    createNamespace: true
+    chart: vmware-tanzu/velero
+    version: 3.1.2
+    secrets:
+      - secrets.yaml
+    values:
+      - configuration:
+          provider: aws
+          backupStorageLocation:
+            name: default
+            bucket: net-chobert-kube-zfs-backups
+            config:
+              s3Url: https://s3.fr-par.scw.cloud
+              region: fr-par
+          volumeSnapshotLocation:
+            name: default
+            provider: openebs.io/zfspv-blockstore
+            config:
+              namespace: openebs
+              provider: aws
+              prefix: zfs
+              bucket: net-chobert-kube-zfs-backups
+              s3Url: https://s3.fr-par.scw.cloud 
+              region: fr-par
+        initContainers:
+          - name: velero-plugin-for-aws
+            image: velero/velero-plugin-for-aws:v1.6.1
+            volumeMounts:
+              - mountPath: /target
+                name: plugins
+          - name: openebs
+            image: openebs/velero-plugin:3.3.0
+            volumeMounts:
+              - mountPath: /target
+                name: plugins
