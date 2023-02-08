@@ -1,8 +1,8 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: ingress-cert
-  namespace: istio-system
+  name: hello-chobert-fr
+  namespace: istio-ingress
 spec:
   issuerRef:
     name: letsencrypt
@@ -11,3 +11,5 @@ spec:
   commonName: {{.Values.host}}
   dnsNames:
     - {{.Values.host}}
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d

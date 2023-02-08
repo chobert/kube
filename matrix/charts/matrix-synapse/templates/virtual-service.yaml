@@ -9,11 +9,11 @@ spec:
     - chobert.fr
   gateways:
     - {{.Release.Name}}
-    - istio-system/root-gateway
+    - chobert-fr/chobert-fr
   http:
     - match:
         - gateways:
-            - istio-system/root-gateway
+            - chobert-fr/chobert-fr
           uri:
             prefix: "/.well-known/matrix"
       route:

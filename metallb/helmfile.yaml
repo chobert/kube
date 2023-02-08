@@ -1,16 +1,36 @@
 repositories:
   - name: metallb
     url: https://metallb.github.io/metallb
+  - name: incubator
+    url: https://charts.helm.sh/incubator
 
 releases:
   - name: metallb
     chart: metallb/metallb
     namespace: metallb-system
     createNamespace: true
+  - name: metallb-config
+    chart: incubator/raw
+    namespace: metallb-system
+    needs:
+      - metallb-system/metallb
     values:
-      - configInline:
-          address-pools:
-            - name: default
-              protocol: layer2
-              addresses:
-                - '{{requiredEnv "LOAD_BALANCER_IP"}}/32'
+      - resources:
+        - apiVersion: metallb.io/v1beta1
+          kind: IPAddressPool
+          metadata:
+            name: ip-pool
+            namespace: metallb-system
+          spec:
+            addresses:
+              - 116.202.180.227/32
+        - apiVersion: metallb.io/v1beta1
+          kind: L2Advertisement
+          metadata:
+            name: l2advertisement
+            namespace: metallb-system
+          spec:
+            ipAddressPools:
+              - ip-pool
+            interfaces:
+              - eth0

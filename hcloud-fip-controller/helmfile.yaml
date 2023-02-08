@@ -1,0 +1,14 @@
+repositories:
+  - name: hcloud-fip-controller
+    url: git+https://github.com/barodeur/hcloud-fip-controller@deploy?sparse=0&ref=feat/helm-chart
+
+releases:
+  - name: hcloud-fip-controller
+    namespace: fip-controller
+    createNamespace: true
+    chart: hcloud-fip-controller/hcloud-fip-controller
+    secrets:
+      - secrets.yaml
+    values:
+      - image:
+          tag: sha-2f9b8fd

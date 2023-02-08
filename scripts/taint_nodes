@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+#
+terraform taint 'hcloud_server.master["master01"]' && \
+  terraform taint 'hcloud_server.master["master02"]' && \
+  terraform taint 'hcloud_server.master["master03"]'

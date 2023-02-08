@@ -24,7 +24,7 @@ spec:
               mountPath: /data
       containers:
         - name: synapse
-          image: matrixdotorg/synapse:v1.47.0
+          image: matrixdotorg/synapse:v1.76.0
           ports:
             - name: web
               containerPort: 8008
