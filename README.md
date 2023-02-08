@@ -1,30 +1,31 @@
 # kube.chobert.net
 
-## Features
+## Architecture
 
-- Architecture
-  - [x] Hetzner cloud hosting
-  - [x] Hetzner private network
-  - [x] MicroOS
-  - [x] K3S
-  - [x] Hetzner CCM
-  - [x] Cilium networking
-  - [x] Kube-vip
-  - [x] Istio Service Mesh
-  - [x] Istio Ingress
-  - [x] Cert Manager
-  - [x] ZFS local volumes
-  - [x] Hetzner volumes
-  - [x] Postgres Operator PGO
-  - [x] Minio Operator
-- Services
-  - [ ] Postgres Main Cluster
-    - [ ] Automated backups
-  - [ ] Keycloak → [id.chobert.fr](https://id.chobert.fr)
-  - [ ] Matrix -> [matrix.chobert.fr](https://matrix.chobert.fr)
-  - [ ] Prometheus & Grafana → [grafana.chobert.fr](https://gitlab.chobert.fr)
-  - [ ] Main Minio Tenant → [minio.chobert.fr](https://minio.chobert.fr)
-  - [ ] Gitlab → [gitlab.chobert.fr](https://gitlab.chobert.fr)
+- [x] Hetzner cloud hosting
+- [x] Hetzner private network
+- [x] MicroOS
+- [x] K3S
+- [x] Hetzner CCM
+- [x] Cilium networking
+- [x] Kube-vip
+- [x] Istio Service Mesh
+- [x] Istio Ingress
+- [x] Cert Manager
+- [x] ZFS local volumes
+- [x] Hetzner volumes
+- [x] Postgres Operator PGO
+- [x] Minio Operator
+
+## Services
+
+- [x] Postgres Main Cluster
+  - [ ] Automated backups
+- [x] Keycloak → [id.chobert.fr](https://id.chobert.fr)
+- [x] Matrix -> [matrix.chobert.fr](https://matrix.chobert.fr)
+- [x] Prometheus & Grafana → [grafana.chobert.fr](https://gitlab.chobert.fr)
+- [x] Main Minio Tenant → [minio.chobert.fr](https://minio.chobert.fr)
+- [x] Gitlab → [gitlab.chobert.fr](https://gitlab.chobert.fr)
 
 ## Storage configuration
 
