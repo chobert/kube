@@ -6,13 +6,15 @@ repositories:
 
 releases:
   - name: istio-base
-    chart: istio/base
     namespace: istio-system
+    chart: istio/base
+    version: 1.16.2
     createNamespace: true
 
   - name: istiod
-    chart: istio/istiod
     namespace: istio-system
+    chart: istio/istiod
+    version: 1.16.2
     needs:
       - istio-system/istio-base
     values:
@@ -20,9 +22,10 @@ releases:
           autoscaleMin: 2
 
   - name: istio-ingressgateway
-    chart: istio/gateway
     namespace: istio-ingress
     createNamespace: false
+    chart: istio/gateway
+    version: 1.16.2
     needs:
       - istio-system/istio-base
       - istio-system/istiod
