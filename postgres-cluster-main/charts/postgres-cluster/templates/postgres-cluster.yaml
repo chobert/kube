@@ -21,7 +21,7 @@ spec:
         - matrix
   instances:
     - name: instance1
-      replica: 2
+      replicas: 2
       dataVolumeClaimSpec:
         storageClassName: datapool-volumes-ext4
         accessModes:
@@ -31,14 +31,12 @@ spec:
             storage: 10Gi
       affinity:
         podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            podAffinityTerm:
-              topologyKey: kubernetes.io/hostname
-              labelSelector:
-                matchLabels:
-                  postgres-operator.crunchydata.com/cluster: {{.Release.Name}}
-                  postgres-operator.crunchydata.com/instance-set: instance1
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: kubernetes.io/hostname
+            labelSelector:
+              matchLabels:
+                postgres-operator.crunchydata.com/cluster: {{.Release.Name}}
+                postgres-operator.crunchydata.com/instance-set: instance1
   backups:
     pgbackrest:
       configuration:
