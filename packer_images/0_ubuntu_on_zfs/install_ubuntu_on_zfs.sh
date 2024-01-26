@@ -485,8 +485,8 @@ echo "======= partitioning the disk =========="
 
   for selected_disk in "${v_selected_disks[@]}"; do
     wipefs --all --force "$selected_disk"
-    sgdisk -a1 -n1:24K:+1000K            -t1:EF02 "$selected_disk"
-    sgdisk -n2:0:+2G                   -t2:BF01 "$selected_disk" # Boot pool
+    sgdisk -a1 -n1:1M:+512M              -t1:EF00 "$selected_disk"
+    sgdisk -n2:0:+2G                     -t2:BF01 "$selected_disk" # Boot pool
     sgdisk -n3:0:"$tail_space_parameter" -t3:BF01 "$selected_disk" # Root pool
   done
 
@@ -734,9 +734,23 @@ chroot_execute "echo options zfs zfs_arc_max=$((v_zfs_arc_max_mb * 1024 * 1024))
 echo "======= setting up grub =========="
 chroot_execute "echo 'grub-pc grub-pc/install_devices_empty   boolean true' | debconf-set-selections"
 chroot_execute "DEBIAN_FRONTEND=noninteractive apt install --yes grub-efi-arm64"
-for disk in ${v_selected_disks[@]}; do
-  chroot_execute "grub-install --target=arm64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy"
+
+chroot_execute "apt install --yes dosfstools"
+
+for selected_disk in "${v_selected_disks[@]}"; do
+  chroot_execute "mkdosfs -F 32 -s 1 -n EFI ${selected_disk}-part1"
 done
+chroot_execute "mkdir /boot/efi"
+for selected_disk in "${v_selected_disks[@]}"; do
+  chroot_execute "echo /dev/disk/by-uuid/$(blkid -s UUID -o value ${selected_disk}-part1) /boot/efi vfat defaults 0 0 >> /etc/fstab"
+done
+chroot_execute "mount /boot/efi"
+
+chroot_execute "mkdir /boot/efi/grub /boot/grub"
+chroot_execute "echo /boot/efi/grub /boot/grub none defaults,bind 0 0 >> /etc/fstab"
+chroot_execute "mount /boot/grub"
+
+chroot_execute "grub-install --target=arm64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy"
 
 chroot_execute "sed -i 's/#GRUB_TERMINAL=console/GRUB_TERMINAL=console/g' /etc/default/grub"
 chroot_execute "sed -i 's|GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"net.ifnames=0\"|' /etc/default/grub"
