@@ -746,6 +746,7 @@ for selected_disk in "${v_selected_disks[@]}"; do
 done
 chroot_execute "mount /boot/efi"
 
+chroot_execute "rm -rf /boot/efi/grub /boot/grub"
 chroot_execute "mkdir /boot/efi/grub /boot/grub"
 chroot_execute "echo /boot/efi/grub /boot/grub none defaults,bind 0 0 >> /etc/fstab"
 chroot_execute "mount /boot/grub"
