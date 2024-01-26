@@ -837,7 +837,6 @@ echo "======= setting up zed =========="
 chroot_execute "zfs set canmount=noauto $v_rpool_name"
 
 echo "======= setting mountpoints =========="
-chroot_execute "zfs set mountpoint=legacy $v_bpool_name/BOOT/ubuntu"
 chroot_execute "echo $v_bpool_name/BOOT/ubuntu /boot zfs nodev,relatime,x-systemd.requires=zfs-mount.service,x-systemd.device-timeout=10 0 0 > /etc/fstab"
 
 chroot_execute "zfs set mountpoint=legacy $v_rpool_name/var/log"
